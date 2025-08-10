@@ -1,0 +1,439 @@
+{
+  "name": "shopify-news-agent",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "79411ec8-41d4-4cd3-9747-5554930f0659",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c",
+          "mode": "list",
+          "cachedResultName": "Selected News Articles",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 68965741,
+          "mode": "list",
+          "cachedResultName": "AI Selected",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c/edit#gid=68965741"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Shopify"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        224,
+        0
+      ],
+      "id": "aca4b4f9-856f-4dc2-a0ae-563673ab7de7",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "S9rP3600wYsYzsH7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://f1d5e6-74.myshopify.com/admin/api/2024-07/blogs/120883347786/articles.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Shopify-Access-Token",
+              "value": "YOUR_SHOPIFY_ACCESS_TOKEN_GOES_HERE"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "=json",
+        "specifyBody": "json",
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "jsonBody": "={\n  \"article\": {\n    \"title\": \"{{ $('Get row(s) in sheet').item.json['Short Title'] }}\",\n    \"body_html\": \"<p>{{ $('Get row(s) in sheet').item.json.Commentary }}</p><p>&nbsp;</p><p><img src=\\\"{{ $('Get row(s) in sheet').item.json['Source Icon'] }}\\\" alt=\\\"{{ $('Get row(s) in sheet').item.json.Source }} logo\\\" style=\\\"max-width: 20px; vertical-align: middle; margin-right: 5px;\\\"><i>{{ $('Get row(s) in sheet').item.json.Source }}</i><br><i><a href=\\\"{{ $('Get row(s) in sheet').item.json.Link }}\\\">Original article</a></i></p>\",\n    \"image\": {\n      \"src\": \"{{ $('Get row(s) in sheet').item.json['Drive Image URL'] }}\"\n    },\n    \"published\": true,\n    \"blog_id\": 120883347786,\n    \"metafields\": [\n      {\n        \"key\": \"featured_image_caption\",\n        \"namespace\": \"custom\",\n        \"value\": \"Original image courtesy of {{ $('Get row(s) in sheet').item.json.Source }}\"\n      }\n    ]\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "561de3b7-0921-4091-8fe1-12c3858fcebd",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YQmPriAusYZ6QmYy",
+          "name": "Header Auth account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c",
+          "mode": "list",
+          "cachedResultName": "Selected News Articles",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 68965741,
+          "mode": "list",
+          "cachedResultName": "AI Selected",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c/edit#gid=68965741"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Get row(s) in sheet').item.json.row_number }}",
+            "Shopify": "Posted"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Selection Date",
+              "displayName": "Selection Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Publish date",
+              "displayName": "Publish date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scrape date",
+              "displayName": "Scrape date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Headline",
+              "displayName": "Headline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Authors",
+              "displayName": "Authors",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source Icon",
+              "displayName": "Source Icon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail",
+              "displayName": "Thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail small",
+              "displayName": "Thumbnail small",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Drive Image URL",
+              "displayName": "Drive Image URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Image Status",
+              "displayName": "Image Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Snippet",
+              "displayName": "Snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Blurb",
+              "displayName": "Blurb",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Short Title",
+              "displayName": "Short Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Commentary",
+              "displayName": "Commentary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Shopify",
+              "displayName": "Shopify",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Threads",
+              "displayName": "Threads",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pinterest",
+              "displayName": "Pinterest",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LinkedIn",
+              "displayName": "LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "X",
+              "displayName": "X",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "YouTube",
+              "displayName": "YouTube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        672,
+        0
+      ],
+      "id": "67126392-4b1a-453e-bc9f-9f6d34d1563f",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "S9rP3600wYsYzsH7",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b70a4846-ad78-4c78-8abc-57cba4a3d80e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "68367a45a48420be8c14bb46a774bc18a0ba4b00a1f80218d611871255dd0ec7"
+  },
+  "id": "HPgXWaXKYX4n6HUc",
+  "tags": []
+}
