@@ -1,0 +1,1804 @@
+{
+  "name": "news-aggregator",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search.json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google"
+            },
+            {
+              "name": "tbm",
+              "value": "nws"
+            },
+            {
+              "name": "q",
+              "value": "(Japan OR Japanese) (anime OR manga OR \"J-pop\" OR \"K-pop\" OR idol OR concert OR tour OR premiere OR release OR series OR album)"
+            },
+            {
+              "name": "num",
+              "value": "100"
+            },
+            {
+              "name": "tbs",
+              "value": "qdr:d,sbd:1"
+            },
+            {
+              "name": "no_cache",
+              "value": "true"
+            },
+            {
+              "name": "hl",
+              "value": "en"
+            },
+            {
+              "name": "api_key",
+              "value": "f505480ab81a76f5f56bd664b222e72e438fd3c9cf3d508aae4228f461820971"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -320,
+        -864
+      ],
+      "id": "ae639fee-4213-41ba-975e-bb8bac927939",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10Ebl6jdFkXtDSQUMM1wO9GhQx5QZb8pE3TkRHgO6hdQ",
+          "mode": "list",
+          "cachedResultName": "Raw News Archive",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10Ebl6jdFkXtDSQUMM1wO9GhQx5QZb8pE3TkRHgO6hdQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feed",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10Ebl6jdFkXtDSQUMM1wO9GhQx5QZb8pE3TkRHgO6hdQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Publish date": "={{ $json.publish_date }}",
+            "Scrape date": "={{ $json.scrape_date }}",
+            "Headline": "={{ $json.headline }}",
+            "Link": "={{ $json.link }}",
+            "Source": "={{ $json.source }}",
+            "Authors": "={{ $json.authors }}",
+            "Source Icon": "={{ $json.source_icon }}",
+            "Thumbnail": "={{ $json.thumbnail }}",
+            "Snippet": "={{ $json.snippet }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Publish date",
+              "displayName": "Publish date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Scrape date",
+              "displayName": "Scrape date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Headline",
+              "displayName": "Headline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Authors",
+              "displayName": "Authors",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Source Icon",
+              "displayName": "Source Icon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Thumbnail",
+              "displayName": "Thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Snippet",
+              "displayName": "Snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        128,
+        -864
+      ],
+      "id": "78de5a5c-7a25-4747-833b-e17f3b5becff",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "S9rP3600wYsYzsH7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code node\n * Reshapes SerpAPI Google‑News results for Google‑Sheets export.\n * Maps to columns:\n *   A publish_date • B scrape_date • C headline • D link\n *   E source • F authors • G source_icon • H thumbnail • I snippet\n */\n\n// 1) get the SerpAPI payload (single incoming item)\nconst serp = $input.first().json;\nif (!serp.news_results?.length) {\n  return [{ json: { error: 'No news_results array in response' } }];\n}\n\n// helper → convert “10 minutes ago / 3 hours ago” to ISO timestamp\nfunction toISO(relative) {\n  const m = /(\\d+)\\s+(minute|hour)/.exec(relative || '');\n  if (!m) return new Date().toISOString();\n  const ms = Number(m[1]) * (m[2] === 'hour' ? 3_600_000 : 60_000);\n  return new Date(Date.now() - ms).toISOString();\n}\n\nconst scrapeISO = new Date().toISOString();\nconst rows = serp.news_results.map(r => ({\n  publish_date : toISO(r.date),     // column A\n  scrape_date  : scrapeISO,         // column B\n  headline     : r.title     || '', // column C\n  link         : r.link      || '', // column D  (unique key)\n  source       : r.source    || '', // column E\n  authors      : '',                // column F  (SerpAPI has no author field)\n  source_icon  : r.favicon   || '', // column G\n  thumbnail    : r.thumbnail || '', // column H\n  snippet      : r.snippet   || ''  // column I\n}));\n\n// 2) newest‑first sort\nrows.sort((a, b) => new Date(b.publish_date) - new Date(a.publish_date));\n\n// 3) de‑dupe on link\nconst seen = new Set();\nconst unique = rows.filter(r => (seen.has(r.link) ? false : seen.add(r.link)));\n\n// 4) hand each row back to n8n\nreturn unique.map(r => ({ json: r }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        -864
+      ],
+      "id": "c4e0fb1c-21c4-41b3-b01a-b91ce007cd36",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "10Ebl6jdFkXtDSQUMM1wO9GhQx5QZb8pE3TkRHgO6hdQ",
+          "mode": "list",
+          "cachedResultName": "Raw News Archive",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10Ebl6jdFkXtDSQUMM1wO9GhQx5QZb8pE3TkRHgO6hdQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feed",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10Ebl6jdFkXtDSQUMM1wO9GhQx5QZb8pE3TkRHgO6hdQ/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -320,
+        32
+      ],
+      "id": "e7f0fd8e-442d-4b3a-b6f5-d5c3e5538a2e",
+      "name": "Get row(s) in sheet",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "S9rP3600wYsYzsH7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * Prep Articles for Scoring\n * -------------------------\n * 1. Deduplicate by Link / Headline\n * 2. Keep only rows within the last 24 h\n * 3. Build ONE selection prompt for Gemini\n *    (now including scrape_date and source_icon)\n */\n\nconst cutoffMs = Date.now() - 24 * 60 * 60 * 1000;   // 24 h ago\nconst seen     = new Set();\nconst articles = [];\n\n// --- dedupe + filter\nfor (const item of items) {\n  const row = item.json;\n  const key = row.Link || row.Headline;\n  if (seen.has(key)) continue;\n  seen.add(key);\n\n  const ts = Date.parse(row['Publish date']);\n  if (isNaN(ts) || ts < cutoffMs) continue;\n\n  articles.push({\n    headline     : row.Headline,\n    snippet      : row.Snippet,\n    link         : row.Link,\n    source       : row.Source,\n    publish_date : row['Publish date'],\n    scrape_date  : row['Scrape date'],     // NEW\n    source_icon  : row['Source Icon'],     // NEW\n    thumbnail    : row.Thumbnail\n  });\n}\n\nconsole.log(`Filtered to ${articles.length} fresh, unique articles.`);\n\n// --- build prompt (unchanged)\nconst prompt = `\nYou are an expert content editor for an online shop that sells minimalist\nJapanese‑inspired art prints, home decor and apparel.\n\nBelow are ${articles.length} Japan‑related news items (headline + snippet). Select **exactly 20** that will most interest and engage our audience of design‑minded young professionals worldwide.\n\nPRIORITISE ARTICLES THAT\n1) Feature Japanese art, design, architecture, fashion or craftsmanship.\n2) Spotlight cultural events (festivals, exhibitions, shows).\n3) Tie into trending keywords: \"wabi‑sabi\", \"minimalist\", anime, zen interior,\n   sustainability, etc.\n4) Offer strong visual hooks we could reference in social posts.\n5) Are fresh (already filtered to last 24 h) and not near‑duplicates.\n\nRETURN ONLY a valid JSON array with exactly 20 of the provided article objects\n(no new or edited fields).\n\nARTICLES:\n${JSON.stringify(articles, null, 2)}\n`;\n\n// --- emit single item downstream\nreturn [{\n  json: {\n    selection_prompt : prompt,\n    article_count    : articles.length,\n    task             : 'pick_top_20'\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        32
+      ],
+      "id": "ac135960-fa5b-47d4-a062-67d423d0bdcb",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.selection_prompt }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        128,
+        -80
+      ],
+      "id": "4f288394-1da4-4884-b5a0-c50a66061d04",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.2,
+          "topP": 0.8
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        208,
+        144
+      ],
+      "id": "c4411b54-412f-42b1-ab2f-ad36417b15ce",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "f60WwghxJQKtUFw2",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * Pass‑through parser for Gemini response\n * ---------------------------------------\n * • Removes Markdown fences / stray text\n * • Parses JSON array of ANY length ≥ 1\n * • Emits each article as its own n8n item\n * • If parsing fails, emits a single error item\n */\n\nconst rawResp =\n      $input.first().json.message   ||\n      $input.first().json.text      ||\n      $input.first().json.response  ||\n      '';\n\ntry {\n  // Strip fences like ```json … ```\n  let clean = rawResp\n    .replace(/```json\\s*/gi, '')\n    .replace(/```/g, '')\n    .replace(/^[^[\\{]*/, '')   // junk before [\n    .replace(/[^}\\]]*$/, '')   // junk after ]\n    .trim();\n\n  const articles = JSON.parse(clean);\n\n  if (!Array.isArray(articles) || articles.length === 0) {\n    throw new Error(`Parsed value is not a non‑empty array.`);\n  }\n\n  console.log(`Gemini returned ${articles.length} articles; passing all through.`);\n\n  return articles.map(a => ({\n    json: {\n      ...a,\n      selection_date: new Date().toISOString()\n    }\n  }));\n\n} catch (err) {\n  console.error('Parsing error:', err);\n  return [{\n    json: {\n      error        : 'Failed to parse Gemini response',\n      details      : err.message,\n      raw_response : rawResp\n    }\n  }];\n}\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        32
+      ],
+      "id": "f37cb477-a61e-4ede-a262-63e242543999",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c",
+          "mode": "list",
+          "cachedResultName": "Selected News Articles",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 68965741,
+          "mode": "list",
+          "cachedResultName": "AI Selected",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c/edit#gid=68965741"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Selection Date": "={{ $json.selection_date }}",
+            "Publish date": "={{ $json.publish_date }}",
+            "Scrape date": "={{ $json.scrape_date }}",
+            "Headline": "={{ $json.headline }}",
+            "Link": "={{ $json.link }}",
+            "Source": "={{ $json.source }}",
+            "Authors": "=",
+            "Source Icon": "={{ $json.source_icon }}",
+            "Thumbnail": "=",
+            "Thumbnail small": "={{ $json.thumbnail }}",
+            "Snippet": "={{ $json.snippet }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Selection Date",
+              "displayName": "Selection Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Publish date",
+              "displayName": "Publish date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scrape date",
+              "displayName": "Scrape date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Headline",
+              "displayName": "Headline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Authors",
+              "displayName": "Authors",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source Icon",
+              "displayName": "Source Icon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail",
+              "displayName": "Thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail small",
+              "displayName": "Thumbnail small",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Drive Image URL",
+              "displayName": "Drive Image URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image Status",
+              "displayName": "Image Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Snippet",
+              "displayName": "Snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Blurb",
+              "displayName": "Blurb",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Short Title",
+              "displayName": "Short Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Commentary",
+              "displayName": "Commentary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Shopify",
+              "displayName": "Shopify",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Threads",
+              "displayName": "Threads",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Pinterest",
+              "displayName": "Pinterest",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LinkedIn",
+              "displayName": "LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "X",
+              "displayName": "X",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "YouTube",
+              "displayName": "YouTube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        704,
+        32
+      ],
+      "id": "49bde3b6-84fc-4357-91b1-19d3a2324820",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "S9rP3600wYsYzsH7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c",
+          "mode": "list",
+          "cachedResultName": "Selected News Articles",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 68965741,
+          "mode": "list",
+          "cachedResultName": "AI Selected",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c/edit#gid=68965741"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Short Title"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -320,
+        608
+      ],
+      "id": "87b62928-43b9-41b7-8ba7-247cfbd3ee3f",
+      "name": "Get row(s) in sheet1",
+      "notesInFlow": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "S9rP3600wYsYzsH7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Turn each sheet row into a tidy payload\nreturn $input.all().map(item => {\n  const d = item.json;\n\n  return {\n    json: {\n      // keep for Update‑Row\n      rowId:   d.row_number,        // <-- change if your ID field is named differently\n\n      // basic article data\n      link:    d.Link,\n      title:   d.Headline,\n      snippet: d.Snippet || ''\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        608
+      ],
+      "id": "bbdabd76-bddf-4334-aa40-b288e47dc35f",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        128,
+        608
+      ],
+      "id": "bf22991b-f2b6-494d-aa08-50762e4909ea",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a friendly, witty curator for young professionals.\n\nTask: Read the linked article (supplied via URL Context) and return JSON only:\n{\n\"rowId\": {{ $json.rowId }},  \n\"shortTitle\": \"<max 6 words, headline case>\",\n  \"commentary\": \"<2‑3 sentences. End with: ‘If you want to know more, click the link to read the original article.’>\"\n}\n\nContext:\nTitle: {{ $json.title }}\nSnippet: {{ $json.snippet }}\nURL: {{ $json.link }}\n",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        352,
+        480
+      ],
+      "id": "3599fbe3-ba95-410e-af78-157f91306160",
+      "name": "Basic LLM Chain1",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        448,
+        640
+      ],
+      "id": "27eee32e-76e0-4626-a839-254e0170e024",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "f60WwghxJQKtUFw2",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Gemini’s JSON reply safely\ntry {\n  // 1. grab the raw string (Gemini puts it in .text)\n  let raw = $json.text || $json.message || '';\n\n  // 2. strip any fencing: ```json ... ```,  \"\"\"json ... \"\"\" or plain \"\"\"\n  raw = raw\n    .replace(/```json/gi, '')\n    .replace(/```/g, '')\n    .replace(/\"\"\"json/gi, '')\n    .replace(/\"\"\"/g, '')\n    .trim();\n\n  // 3. ensure it starts with { … }\n  if (!raw.startsWith('{')) raw = `{${raw.replace(/^[^{]+/, '')}`;\n  const data = JSON.parse(raw);\n\n  return [{\n    json: {\n       ...$json,                         // keeps link, title, snippet, etc.\n      rowId:        data.rowId,          // echoed back\n      \"Short Title\": data.shortTitle || data.short_title || '',\n      \"Commentary\":  data.commentary || ''\n    }\n  }];\n} catch (e) {\n  return [{ json: { rowId: $json.rowId, \"Short Title\": '', \"Commentary\": '', error: 'parse‑fail' } }];\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        480
+      ],
+      "id": "0064e5cb-cf0d-4352-bebb-58adb2738193",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c",
+          "mode": "list",
+          "cachedResultName": "Selected News Articles",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 68965741,
+          "mode": "list",
+          "cachedResultName": "AI Selected",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zwmpR9Mem8YfvrXYUmYj8b9QmyCpiD5ytrG8UVcWI6c/edit#gid=68965741"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Link": "={{ $('Code3').item.json.link }}",
+            "Short Title": "={{ $json['Short Title'] }}",
+            "Commentary": "={{ $json.Commentary }}",
+            "row_number": "={{ $json.rowId }}",
+            "Thumbnail": "={{ $('Get row(s) in sheet1').item.json.Thumbnail }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Selection Date",
+              "displayName": "Selection Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Publish date",
+              "displayName": "Publish date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Scrape date",
+              "displayName": "Scrape date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Headline",
+              "displayName": "Headline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Authors",
+              "displayName": "Authors",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source Icon",
+              "displayName": "Source Icon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail",
+              "displayName": "Thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Thumbnail small",
+              "displayName": "Thumbnail small",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Drive Image URL",
+              "displayName": "Drive Image URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image Status",
+              "displayName": "Image Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Snippet",
+              "displayName": "Snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Blurb",
+              "displayName": "Blurb",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Short Title",
+              "displayName": "Short Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Commentary",
+              "displayName": "Commentary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Shopify",
+              "displayName": "Shopify",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Instagram",
+              "displayName": "Instagram",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Facebook",
+              "displayName": "Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Threads",
+              "displayName": "Threads",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Pinterest",
+              "displayName": "Pinterest",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LinkedIn",
+              "displayName": "LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "X",
+              "displayName": "X",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TikTok",
+              "displayName": "TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "YouTube",
+              "displayName": "YouTube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        928,
+        608
+      ],
+      "id": "37412c52-242d-4cea-993d-6f8f159a6b1a",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "S9rP3600wYsYzsH7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search.json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google"
+            },
+            {
+              "name": "tbm",
+              "value": "nws"
+            },
+            {
+              "name": "q",
+              "value": "(Japan OR Japanese) (japandi OR minimalist OR \"wabi-sabi\" OR design OR architecture OR zen OR interior OR \"home decor\" OR wellness OR \"feng shui\" OR ikebana OR declutter OR storage)"
+            },
+            {
+              "name": "num",
+              "value": "100"
+            },
+            {
+              "name": "tbs",
+              "value": "qdr:d,sbd:1"
+            },
+            {
+              "name": "no_cache",
+              "value": "true"
+            },
+            {
+              "name": "hl",
+              "value": "en"
+            },
+            {
+              "name": "api_key",
+              "value": "f505480ab81a76f5f56bd664b222e72e438fd3c9cf3d508aae4228f461820971"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -320,
+        -608
+      ],
+      "id": "03f927a7-e6d1-49be-89d1-133ce76c2d46",
+      "name": "HTTP Request2",
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10Ebl6jdFkXtDSQUMM1wO9GhQx5QZb8pE3TkRHgO6hdQ",
+          "mode": "list",
+          "cachedResultName": "Raw News Archive",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10Ebl6jdFkXtDSQUMM1wO9GhQx5QZb8pE3TkRHgO6hdQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feed",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10Ebl6jdFkXtDSQUMM1wO9GhQx5QZb8pE3TkRHgO6hdQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Publish date": "={{ $json.publish_date }}",
+            "Scrape date": "={{ $json.scrape_date }}",
+            "Headline": "={{ $json.headline }}",
+            "Link": "={{ $json.link }}",
+            "Source": "={{ $json.source }}",
+            "Authors": "={{ $json.authors }}",
+            "Source Icon": "={{ $json.source_icon }}",
+            "Thumbnail": "={{ $json.thumbnail }}",
+            "Snippet": "={{ $json.snippet }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Publish date",
+              "displayName": "Publish date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Scrape date",
+              "displayName": "Scrape date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Headline",
+              "displayName": "Headline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Authors",
+              "displayName": "Authors",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Source Icon",
+              "displayName": "Source Icon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Thumbnail",
+              "displayName": "Thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Snippet",
+              "displayName": "Snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        128,
+        -608
+      ],
+      "id": "260f8e2a-61e2-4a4d-a936-88b4dda124c2",
+      "name": "Append row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "S9rP3600wYsYzsH7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code node\n * Reshapes SerpAPI Google‑News results for Google‑Sheets export.\n * Maps to columns:\n *   A publish_date • B scrape_date • C headline • D link\n *   E source • F authors • G source_icon • H thumbnail • I snippet\n */\n\n// 1) get the SerpAPI payload (single incoming item)\nconst serp = $input.first().json;\nif (!serp.news_results?.length) {\n  return [{ json: { error: 'No news_results array in response' } }];\n}\n\n// helper → convert “10 minutes ago / 3 hours ago” to ISO timestamp\nfunction toISO(relative) {\n  const m = /(\\d+)\\s+(minute|hour)/.exec(relative || '');\n  if (!m) return new Date().toISOString();\n  const ms = Number(m[1]) * (m[2] === 'hour' ? 3_600_000 : 60_000);\n  return new Date(Date.now() - ms).toISOString();\n}\n\nconst scrapeISO = new Date().toISOString();\nconst rows = serp.news_results.map(r => ({\n  publish_date : toISO(r.date),     // column A\n  scrape_date  : scrapeISO,         // column B\n  headline     : r.title     || '', // column C\n  link         : r.link      || '', // column D  (unique key)\n  source       : r.source    || '', // column E\n  authors      : '',                // column F  (SerpAPI has no author field)\n  source_icon  : r.favicon   || '', // column G\n  thumbnail    : r.thumbnail || '', // column H\n  snippet      : r.snippet   || ''  // column I\n}));\n\n// 2) newest‑first sort\nrows.sort((a, b) => new Date(b.publish_date) - new Date(a.publish_date));\n\n// 3) de‑dupe on link\nconst seen = new Set();\nconst unique = rows.filter(r => (seen.has(r.link) ? false : seen.add(r.link)));\n\n// 4) hand each row back to n8n\nreturn unique.map(r => ({ json: r }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        -608
+      ],
+      "id": "e8e8889c-8b21-4f5b-ad07-d69d0ea53207",
+      "name": "Code5"
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search.json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google"
+            },
+            {
+              "name": "tbm",
+              "value": "nws"
+            },
+            {
+              "name": "q",
+              "value": "(Japan OR Japanese OR Tokyo OR Osaka OR Kyoto OR Fukuoka) (festival OR shrine OR temple OR ramen OR sushi OR matcha OR exhibition OR museum OR artist OR gallery OR \"fashion week\")"
+            },
+            {
+              "name": "num",
+              "value": "100"
+            },
+            {
+              "name": "tbs",
+              "value": "qdr:d,sbd:1"
+            },
+            {
+              "name": "no_cache",
+              "value": "true"
+            },
+            {
+              "name": "hl",
+              "value": "en"
+            },
+            {
+              "name": "api_key",
+              "value": "f505480ab81a76f5f56bd664b222e72e438fd3c9cf3d508aae4228f461820971"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -320,
+        -336
+      ],
+      "id": "12921d0d-6b71-43d0-bf74-da1ad76c7e07",
+      "name": "HTTP Request3",
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10Ebl6jdFkXtDSQUMM1wO9GhQx5QZb8pE3TkRHgO6hdQ",
+          "mode": "list",
+          "cachedResultName": "Raw News Archive",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10Ebl6jdFkXtDSQUMM1wO9GhQx5QZb8pE3TkRHgO6hdQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feed",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10Ebl6jdFkXtDSQUMM1wO9GhQx5QZb8pE3TkRHgO6hdQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Publish date": "={{ $json.publish_date }}",
+            "Scrape date": "={{ $json.scrape_date }}",
+            "Headline": "={{ $json.headline }}",
+            "Link": "={{ $json.link }}",
+            "Source": "={{ $json.source }}",
+            "Authors": "={{ $json.authors }}",
+            "Source Icon": "={{ $json.source_icon }}",
+            "Thumbnail": "={{ $json.thumbnail }}",
+            "Snippet": "={{ $json.snippet }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Publish date",
+              "displayName": "Publish date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Scrape date",
+              "displayName": "Scrape date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Headline",
+              "displayName": "Headline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Authors",
+              "displayName": "Authors",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Source Icon",
+              "displayName": "Source Icon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Thumbnail",
+              "displayName": "Thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Snippet",
+              "displayName": "Snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        128,
+        -336
+      ],
+      "id": "6629fa91-6adb-45fd-9684-199e5f8008a0",
+      "name": "Append row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "S9rP3600wYsYzsH7",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code node\n * Reshapes SerpAPI Google‑News results for Google‑Sheets export.\n * Maps to columns:\n *   A publish_date • B scrape_date • C headline • D link\n *   E source • F authors • G source_icon • H thumbnail • I snippet\n */\n\n// 1) get the SerpAPI payload (single incoming item)\nconst serp = $input.first().json;\nif (!serp.news_results?.length) {\n  return [{ json: { error: 'No news_results array in response' } }];\n}\n\n// helper → convert “10 minutes ago / 3 hours ago” to ISO timestamp\nfunction toISO(relative) {\n  const m = /(\\d+)\\s+(minute|hour)/.exec(relative || '');\n  if (!m) return new Date().toISOString();\n  const ms = Number(m[1]) * (m[2] === 'hour' ? 3_600_000 : 60_000);\n  return new Date(Date.now() - ms).toISOString();\n}\n\nconst scrapeISO = new Date().toISOString();\nconst rows = serp.news_results.map(r => ({\n  publish_date : toISO(r.date),     // column A\n  scrape_date  : scrapeISO,         // column B\n  headline     : r.title     || '', // column C\n  link         : r.link      || '', // column D  (unique key)\n  source       : r.source    || '', // column E\n  authors      : '',                // column F  (SerpAPI has no author field)\n  source_icon  : r.favicon   || '', // column G\n  thumbnail    : r.thumbnail || '', // column H\n  snippet      : r.snippet   || ''  // column I\n}));\n\n// 2) newest‑first sort\nrows.sort((a, b) => new Date(b.publish_date) - new Date(a.publish_date));\n\n// 3) de‑dupe on link\nconst seen = new Set();\nconst unique = rows.filter(r => (seen.has(r.link) ? false : seen.add(r.link)));\n\n// 4) hand each row back to n8n\nreturn unique.map(r => ({ json: r }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        -336
+      ],
+      "id": "e2fba12f-853a-4afe-9674-d4c73b92991c",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        -864
+      ],
+      "id": "09316cee-3d30-44fc-a66f-acc631c171d9",
+      "name": "Pop Culture"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 5,
+              "triggerAtMinute": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        -608
+      ],
+      "id": "873ec223-7942-412a-afee-7a2272c1190a",
+      "name": "Design"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 5,
+              "triggerAtMinute": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        -336
+      ],
+      "id": "30c6e51e-1f11-453f-8084-b83ba8b3232b",
+      "name": "Culture"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6,
+              "triggerAtMinute": {}
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        32
+      ],
+      "id": "6eb0d587-1015-4078-8849-53b231c2a1a3",
+      "name": "Article selector"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        608
+      ],
+      "id": "f2eadf1e-561d-47f0-8791-bc46436277ad",
+      "name": "Article commenter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Code5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code5": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pop Culture": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Design": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Culture": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Article selector": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Article commenter": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/London",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 900
+  },
+  "versionId": "cef15908-9c52-4701-a45d-2f6cdf763144",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "68367a45a48420be8c14bb46a774bc18a0ba4b00a1f80218d611871255dd0ec7"
+  },
+  "id": "tf0DkonXbsZdWgof",
+  "tags": []
+}
